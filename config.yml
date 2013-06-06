@@ -1,0 +1,28 @@
+#
+# CrashNotifier Configuration File
+# =====================================
+#
+# Don't use tabs in yml file!
+# 
+# If you mess this config up, feel free to delete this one, and let
+# the plugin create you a new one!
+#
+# You may use minecraft color codes! &a, &b, &c, &d, etc...
+# Variables are: {player} and {online}. {online} shows the number of players currently online.
+#
+
+
+# Messages that are shown if the player leaves the game normally and has the crashnotifier.join and crashnotifier.quit permission node
+default-messages:
+    join: '&e{player} joined the game.'
+    quit: '&e{player} left the game.'
+    
+     
+# Messages that are shown if the player loses connection and has the crashnotifier.crash permission node
+crash-messages:
+    kick: '&e{player} has been kicked.'
+    spam: '&e{player} has been kicked for spam.'
+    genericReason: '&e{player} has lost connection. &cGeneric Reason'
+    endOfStream: '&e{player} has lost connection. &cEnd Of Stream'
+    overflow: '&e{player} has lost connection. &cOverflow'
+    timeout: '&e{player} has lost connection. &cTimeout'

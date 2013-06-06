@@ -1,0 +1,37 @@
+name: CrashNotifier
+author: jacklink01
+version: 1.0
+main: com.jacklinkproductions.CrashNotifier.Main
+
+commands:
+   crash:
+      description: Fakes crashing.
+      usage: /<command> <type>
+      permission: crashnotifier.fakecrash
+   crashnotifier:
+      description: Information about the plugin.
+      usage: /<command> info
+
+permissions:
+    announcer.*:
+        description: Gives access to all commands and functions.
+        children:
+            crashnotifier.reload: true
+            crashnotifier.fakecrash: true
+            crashnotifier.show: true
+            crashnotifier.use: true
+    crashnotifier.reload:
+        description: Allows you to reload the config.
+        default: op
+    crashnotifier.fakecrash:
+        description: Allows you to fake crash. /crash
+        default: op
+    crashnotifier.join:
+        description: Allows you to have a different join message.
+        default: true
+    crashnotifier.quit:
+        description: Allows you to perform crash messages by crashing or have a different quit message.
+        default: true
+    crashnotifier.show:
+        description: Allows you to see the crash messages and other message created by this plugin.
+        default: true
