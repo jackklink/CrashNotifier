@@ -1,4 +1,3 @@
-
 package com.jacklinkproductions.CrashNotifier;
 
 import java.io.File;
