@@ -42,32 +42,7 @@ public class CrashCommand implements CommandExecutor {
 	    	
 	        if (args.length == 0 && sender.hasPermission("crashnotifier.fakecrash"))
 			{
-				CrashListener.filterCheckStream = true;
-				player.kickPlayer("You have fake crashed! End of Stream");
-		        return true;
-			}
-			else if (args[0].equalsIgnoreCase("genericreason") && sender.hasPermission("crashnotifier.fakecrash"))
-			{
-				CrashListener.filterCheckGeneric = true;
-				player.kickPlayer("You have fake crashed! Generic");
-		        return true;
-			}
-			else if (args[0].equalsIgnoreCase("endofstream") && sender.hasPermission("crashnotifier.fakecrash"))
-			{
-				CrashListener.filterCheckStream = true;
-				player.kickPlayer("You have fake crashed! End of Stream");
-		        return true;
-			}
-			else if (args[0].equalsIgnoreCase("overflow") && sender.hasPermission("crashnotifier.fakecrash"))
-			{
-				CrashListener.filterCheckOverflow = true;
-				player.kickPlayer("You have fake crashed! Overflow");
-		        return true;
-			}
-			else if (args[0].equalsIgnoreCase("timeout") && sender.hasPermission("crashnotifier.fakecrash"))
-			{
-				CrashListener.filterCheckTimeout = true;
-				player.kickPlayer("You have fake crashed! Timeout");
+				player.kickPlayer("You have fake crashed! \"Network Error\"");
 		        return true;
 			}
 			else if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("crashnotifier.reload"))

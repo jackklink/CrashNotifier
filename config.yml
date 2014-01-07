@@ -16,13 +16,18 @@
 default-messages:
     join: '&e{player} joined the game.'
     quit: '&e{player} left the game.'
-    
-     
+
+
 # Messages that are shown if the player loses connection and has the crashnotifier.crash permission node
 crash-messages:
     kick: '&e{player} has been kicked.'
-    spam: '&e{player} has been kicked for spam.'
-    genericReason: '&e{player} has lost connection. &cGeneric Reason'
-    endOfStream: '&e{player} has lost connection. &cEnd Of Stream'
-    overflow: '&e{player} has lost connection. &cOverflow'
-    timeout: '&e{player} has lost connection. &cTimeout'
+    spam: '&e{player} has been kicked for &cspamming.'
+    remoteHost: '&e{player} has lost connection. &cNetwork Error'
+
+
+# Keep up to date! This plugin can notify you about updates and let you install them from in-game!
+update-notification: true
+
+
+# Don't touch this unless you wanna lose your config. :)
+config-version: 2

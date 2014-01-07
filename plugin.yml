@@ -1,12 +1,12 @@
 name: CrashNotifier
 author: jacklink01
-version: 1.1
+version: 2.0
 main: com.jacklinkproductions.CrashNotifier.Main
 
 commands:
    crash:
       description: Fakes crashing.
-      usage: /<command> <type>
+      usage: /<command> [reload]
       permission: crashnotifier.fakecrash
    crashnotifier:
       description: Information about the plugin.

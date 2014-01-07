@@ -17,18 +17,12 @@ public class CrashListener implements Listener {
     public static boolean filterCheckQuitting = false;
     public static boolean filterCheckKick = false;
     public static boolean filterCheckSpam = false;
-    public static boolean filterCheckGeneric = false;
-    public static boolean filterCheckStream = false;
-    public static boolean filterCheckOverflow = false;
-    public static boolean filterCheckTimeout = false;
+    public static boolean filterCheckHost = false;
     public static String joinmessage = "&e{player} joined the game.";
     public static String quitmessage = "&e{player} left the game.";
     public static String kickmessage = "&e{player} has been kicked.";
     public static String spammessage = "&e{player} has been kicked for spam.";
-    public static String timeoutmessage = "&e{player} has lost connection. &cTimeout";
-    public static String overflowmessage = "&e{player} has lost connection. &cOverflow";
-    public static String streammessage = "&e{player} has lost connection. &cEnd of Stream";
-    public static String genericmessage = "&e{player} has lost connection. &cGeneric Reason";
+    public static String hostmessage = "&e{player} has lost connection. &cNetwork Error";
 
 
     public CrashListener(Main instance) {
@@ -36,17 +30,8 @@ public class CrashListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-
-    	fakeCrash = false;
-	    filterCheckQuitting = false;
-	    filterCheckKick = false;
-	    filterCheckSpam = false;
-	    filterCheckGeneric = false;
-	    filterCheckStream = false;
-	    filterCheckOverflow = false;
-	    filterCheckTimeout = false;
-    	
+    public void onPlayerJoin(PlayerJoinEvent event)
+    {
 	    if (event.getPlayer().hasPermission("crashnotifier.join")) {
 
 	        String message = null;
@@ -60,39 +45,21 @@ public class CrashListener implements Listener {
     }
     
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-    	
-    	if (fakeCrash) { return; } //DONT DO THIS IF THE CRASH WAS FAKE
-    	
-	    if (event.getPlayer().hasPermission("crashnotifier.crash"))
-	    {
-	        crashPerm = true;
-	    }
-	    if (event.getPlayer().hasPermission("crashnotifier.quit"))
-	    {
-	        quitPerm = true;
-	    }
-
+    public void onPlayerQuit(PlayerQuitEvent event)
+    {
+	    if (event.getPlayer().hasPermission("crashnotifier.crash")) { crashPerm = true; }
+	    if (event.getPlayer().hasPermission("crashnotifier.quit")) { quitPerm = true; }
+	    
         String message = null;
     	int online = plugin.getServer().getOnlinePlayers().length - 1;
     	
-		if (filterCheckGeneric && crashPerm) {
-			String m = genericmessage.replace("{player}", event.getPlayer().getName());
+    	if (fakeCrash) {
+			String m = hostmessage.replace("{player}", event.getPlayer().getName());
 			message	= m.replace("{online}", ""+online);
 			plugin.getLogger().info(event.getPlayer().getName() + " crashed!");
-		}
-		else if (filterCheckStream && crashPerm) {
-			String m = streammessage.replace("{player}", event.getPlayer().getName());
-			message	= m.replace("{online}", ""+online);
-			plugin.getLogger().info(event.getPlayer().getName() + " crashed!");
-		}
-		else if (filterCheckOverflow && crashPerm) {
-			String m = overflowmessage.replace("{player}", event.getPlayer().getName());
-			message	= m.replace("{online}", ""+online);
-			plugin.getLogger().info(event.getPlayer().getName() + " crashed!");
-		}
-		else if (filterCheckTimeout && crashPerm) {
-			String m = timeoutmessage.replace("{player}", event.getPlayer().getName());
+    	}
+    	else if (filterCheckHost && crashPerm) {
+			String m = hostmessage.replace("{player}", event.getPlayer().getName());
 			message	= m.replace("{online}", ""+online);
 			plugin.getLogger().info(event.getPlayer().getName() + " crashed!");
 		}
@@ -130,23 +97,8 @@ public class CrashListener implements Listener {
         String message = null;
     	int online = plugin.getServer().getOnlinePlayers().length - 1;
     	
-		if (filterCheckGeneric) {
-			String m = genericmessage.replace("{player}", event.getPlayer().getName());
-			message	= m.replace("{online}", ""+online);
-			plugin.getLogger().info(event.getPlayer().getName() + " fake crashed!");
-		}
-		else if (filterCheckStream) {
-			String m = streammessage.replace("{player}", event.getPlayer().getName());
-			message	= m.replace("{online}", ""+online);
-			plugin.getLogger().info(event.getPlayer().getName() + " fake crashed!");
-		}
-		else if (filterCheckOverflow) {
-			String m = overflowmessage.replace("{player}", event.getPlayer().getName());
-			message	= m.replace("{online}", ""+online);
-			plugin.getLogger().info(event.getPlayer().getName() + " fake crashed!");
-		}
-		else if (filterCheckTimeout) {
-			String m = timeoutmessage.replace("{player}", event.getPlayer().getName());
+		if (filterCheckHost) {
+			String m = hostmessage.replace("{player}", event.getPlayer().getName());
 			message	= m.replace("{online}", ""+online);
 			plugin.getLogger().info(event.getPlayer().getName() + " fake crashed!");
 		}

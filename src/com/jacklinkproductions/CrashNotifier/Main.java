@@ -1,6 +1,7 @@
 package com.jacklinkproductions.CrashNotifier;
 
 import java.io.File;
+import org.apache.logging.log4j.LogManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -23,15 +24,34 @@ public class Main extends JavaPlugin {
     	
         // Create default config if not exist yet.
         if (!new File(getDataFolder(), "config.yml").exists()) {
+            getLogger().info( "Creating config.yml" );
             saveDefaultConfig();
         }
 
-        // Load configuration.
+        // Load configuration
         reloadConfiguration();
+        
+        // Check for old config
+        if ((getConfig().isSet("config-version") == false) || (getConfig().getInt("config-version") < 2))
+        {
+            File file = new File(this.getDataFolder(), "config.yml");
+            file.delete();
+            saveDefaultConfig();
+            getLogger().info( "Created a new config.yml for this version." );
+        }
+        
+        // Setup Updater system
+        if (getConfig().getString("update-notification") == "true")
+        {
+        	new Updater(this, 54918, this.getFile(), Updater.UpdateType.DEFAULT, false);
+        }
         
         // Register our events
         getServer().getPluginManager().registerEvents(new CrashListener(this), this);
-        getServer().getLogger().setFilter(new CrashNotifierFilter(this));
+        //getLogger().addFilter(new CrashNotifierFilter(this));
+
+        // Register logger (1.7 HAX) :(
+        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new CrashNotifierFilter(this));
 
         // Register command executor.
         CrashCommand crashCommandExecutor = new CrashCommand(this);
@@ -40,7 +60,7 @@ public class Main extends JavaPlugin {
 
         // Output info to console on load
         pdfFile = this.getDescription();
-        getLogger().info( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
+        getLogger().info( pdfFile.getName() + " v" + pdfFile.getVersion() + " is enabled!" );
     }
     
     public void reloadConfiguration() {
@@ -49,10 +69,7 @@ public class Main extends JavaPlugin {
         CrashListener.quitmessage = getConfig().getString("default-messages.quit");
         CrashListener.kickmessage = getConfig().getString("crash-messages.kick");
         CrashListener.spammessage = getConfig().getString("crash-messages.spam");
-        CrashListener.genericmessage = getConfig().getString("crash-messages.genericReason");
-        CrashListener.streammessage = getConfig().getString("crash-messages.endOfStream");
-        CrashListener.overflowmessage = getConfig().getString("crash-messages.overflow");
-        CrashListener.timeoutmessage = getConfig().getString("crash-messages.timeout");
+        CrashListener.hostmessage = getConfig().getString("crash-messages.remoteHost");
     }
     
 	public static PluginDescriptionFile getPDF()
