@@ -23,6 +23,12 @@ crash-messages:
     kick: '&e{player} has been kicked.'
     spam: '&e{player} has been kicked for &cspamming.'
     remoteHost: '&e{player} has lost connection. &cNetwork Error'
+    softwareHost: '&e{player} has lost connection. &cClient Error'
+    readTimeout: '&e{player} has lost connection. &cRead Timeout'
+    
+    
+# Show when players try to login, but don't make it all the way into the game
+showLoginAttempts: false
 
 
 # Keep up to date! This plugin can notify you about updates and let you install them from in-game!
@@ -30,4 +36,4 @@ update-notification: true
 
 
 # Don't touch this unless you wanna lose your config. :)
-config-version: 2
+config-version: 3

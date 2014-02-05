@@ -18,11 +18,15 @@ public class CrashListener implements Listener {
     public static boolean filterCheckKick = false;
     public static boolean filterCheckSpam = false;
     public static boolean filterCheckHost = false;
+    public static boolean filterCheckSoftware = false;
+    public static boolean filterCheckReadTimeout = false;
     public static String joinmessage = "&e{player} joined the game.";
     public static String quitmessage = "&e{player} left the game.";
     public static String kickmessage = "&e{player} has been kicked.";
     public static String spammessage = "&e{player} has been kicked for spam.";
     public static String hostmessage = "&e{player} has lost connection. &cNetwork Error";
+    public static String softwaremessage = "&e{player} has lost connection. &cClient Error";
+    public static String timeoutmessage = "&e{player} has lost connection. &cRead Timeout";
 
 
     public CrashListener(Main instance) {
@@ -63,6 +67,11 @@ public class CrashListener implements Listener {
 			message	= m.replace("{online}", ""+online);
 			plugin.getLogger().info(event.getPlayer().getName() + " crashed!");
 		}
+    	else if (filterCheckSoftware && crashPerm) {
+			String m = softwaremessage.replace("{player}", event.getPlayer().getName());
+			message	= m.replace("{online}", ""+online);
+			plugin.getLogger().info(event.getPlayer().getName() + " crashed!");
+		}
 		else if (filterCheckSpam && crashPerm) {
 			String m = spammessage.replace("{player}", event.getPlayer().getName());
 			message	= m.replace("{online}", ""+online);
@@ -83,6 +92,13 @@ public class CrashListener implements Listener {
 		if (quitPerm || crashPerm)
 		{
 			event.setQuitMessage(Main.parseColor(message));
+
+			filterCheckKick = false;
+			filterCheckSpam = false;
+			filterCheckHost = false;
+			filterCheckSoftware = false;
+			filterCheckReadTimeout = false;
+			filterCheckQuitting = false;
 		}
     }
     

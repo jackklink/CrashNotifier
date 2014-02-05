@@ -6,25 +6,56 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.message.Message;
+import org.bukkit.ChatColor;
 
 public class CrashNotifierFilter implements Filter
 {
-	public CrashNotifierFilter(Main instance)
-	{
-		
+	private final Main plugin;
+	
+    public static String loginattempts = "false";
+
+	public CrashNotifierFilter(Main instance) {
+		plugin = instance;
 	}
 	
 	public Result filter(LogEvent event)
 	{
 		String message = event.getMessage().toString().toLowerCase();
-		
-		if (message.contains("lost connection")) {
+		String m = event.getMessage().toString();
 
-			CrashListener.filterCheckKick = false;
-			CrashListener.filterCheckSpam = false;
-			CrashListener.filterCheckHost = false;
-			CrashListener.filterCheckQuitting = false;
-	
+		/* CrashListener.filterCheckKick = false;
+		CrashListener.filterCheckSpam = false;
+		CrashListener.filterCheckHost = false;
+		CrashListener.filterCheckSoftware = false;
+		CrashListener.filterCheckReadTimeout = false;
+		CrashListener.filterCheckQuitting = false; */
+		
+		if (message.contains("gameprofile{id=") & loginattempts == "true")
+		{
+			String reason = "Unknown Reason";
+			String username = m.replaceAll(".*name=\\'|\\'.*", "");
+			
+			if (message.contains("an existing connection was forcibly closed by the remote host")) {
+				reason = "Network Error";
+			}
+			if (message.contains("an established connection was aborted by the software in your host machine")) {
+				reason = "Client Error";
+			}
+			if (message.contains("internal exception: net.minecraft.util.io.netty.handler.timeout.readtimeoutexception")) {
+				reason = "Read Timeout";
+			}
+			if (message.contains("took too long to log in")) {
+					reason = "Login Timeout";
+			}
+			if (message.contains("disconnected")) {
+				reason = "Disconnected";
+			}
+			
+			if ((username != null) && (username.length() < 20))
+				plugin.getServer().broadcastMessage(ChatColor.YELLOW + username + " attempted to login, but failed. " + ChatColor.RED + reason);
+		}
+		else if (message.contains("lost connection"))
+		{
 			if (message.contains("kick")) {
 				CrashListener.filterCheckKick = true;
 				return null;
@@ -35,6 +66,14 @@ public class CrashNotifierFilter implements Filter
 			}
 			if (message.contains("an existing connection was forcibly closed by the remote host")) {
 				CrashListener.filterCheckHost = true;
+				return null;
+			}
+			if (message.contains("an established connection was aborted by the software in your host machine")) {
+				CrashListener.filterCheckSoftware = true;
+				return null;
+			}
+			if (message.contains("internal exception: net.minecraft.util.io.netty.handler.timeout.readtimeoutexception")) {
+				CrashListener.filterCheckReadTimeout = true;
 				return null;
 			}
 			if (message.contains("disconnected")) {
@@ -78,47 +117,3 @@ public class CrashNotifierFilter implements Filter
 		return null;
 	}
 }
-
-
-/*
-		if (arg0.getMessage().toLowerCase().contains("lost connection")) {
-
-			CrashListener.filterCheckKick = false;
-			CrashListener.filterCheckSpam = false;
-			CrashListener.filterCheckGeneric = false;
-			CrashListener.filterCheckStream = false;
-			CrashListener.filterCheckOverflow = false;
-			CrashListener.filterCheckTimeout = false;
-
-			if (arg0.getMessage().toLowerCase().contains("kick")) {
-				CrashListener.filterCheckKick = true;
-				return true;
-			}
-			if (arg0.getMessage().toLowerCase().contains("spam")) {
-				CrashListener.filterCheckSpam = true;
-				return true;
-			}
-			if (arg0.getMessage().toLowerCase().contains("genericreason")) {
-				CrashListener.filterCheckGeneric = true;
-				return true;
-			}
-			if (arg0.getMessage().toLowerCase().contains("an existing connection was forcibly closed by the remote host")) {
-				CrashListener.filterCheckStream = true;
-				return true;
-			}
-			if (arg0.getMessage().toLowerCase().contains("overflow")) {
-				CrashListener.filterCheckOverflow = true;
-				return true;
-			}
-			if (arg0.getMessage().toLowerCase().contains("timeout")) {
-				CrashListener.filterCheckTimeout = true;
-				return true;
-			}
-			if (arg0.getMessage().toLowerCase().contains("quitting")) {
-				CrashListener.filterCheckQuitting = true;
-				return true;
-			}
-		}
-		return true;
-	}
-} */

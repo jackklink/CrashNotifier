@@ -4,14 +4,19 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin {
-	
-    private static PluginDescriptionFile pdfFile;
-	private static Server bukkitServer;
+public class Main extends JavaPlugin
+{
+    static PluginDescriptionFile pdfFile;
+
+	public static Integer configVersion = 3;
+	public static int updaterID = 54918;
     
     @Override
     public void onDisable() {
@@ -32,18 +37,18 @@ public class Main extends JavaPlugin {
         reloadConfiguration();
         
         // Check for old config
-        if ((getConfig().isSet("config-version") == false) || (getConfig().getInt("config-version") < 2))
+        if ((getConfig().isSet("config-version") == false) || (getConfig().getInt("config-version") < configVersion))
         {
             File file = new File(this.getDataFolder(), "config.yml");
             file.delete();
             saveDefaultConfig();
             getLogger().info( "Created a new config.yml for this version." );
         }
-        
+
         // Setup Updater system
         if (getConfig().getString("update-notification") == "true")
         {
-        	new Updater(this, 54918, this.getFile(), Updater.UpdateType.DEFAULT, false);
+        	checkForUpdates();
         }
         
         // Register our events
@@ -70,20 +75,56 @@ public class Main extends JavaPlugin {
         CrashListener.kickmessage = getConfig().getString("crash-messages.kick");
         CrashListener.spammessage = getConfig().getString("crash-messages.spam");
         CrashListener.hostmessage = getConfig().getString("crash-messages.remoteHost");
+        CrashListener.softwaremessage = getConfig().getString("crash-messages.softwareHost");
+        CrashListener.timeoutmessage = getConfig().getString("crash-messages.readTimeout");
+        CrashNotifierFilter.loginattempts = getConfig().getString("showLoginAttempts");
     }
-    
-	public static PluginDescriptionFile getPDF()
-	{
-		return pdfFile;
-	}
-
-	public static Server getBukkitServer()
-	{
-		return bukkitServer;
-	}
 
 	public static String parseColor(String line)
 	{
 		return ChatColor.translateAlternateColorCodes('&', line);
 	}
+
+    public boolean updateAvailable = false;
+    String latestVersion = null;
+
+    public void checkForUpdates()
+    {
+        final Updater updater = new Updater(this, updaterID, getFile(), Updater.UpdateType.NO_DOWNLOAD, true); // Start Updater but just do a version check
+        updateAvailable = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine if there is an update ready for us
+        latestVersion = updater.getLatestName();
+        getLogger().info(latestVersion + " is the latest version available, and the updatability of it is: " + updater.getResult().name());
+
+        if(updateAvailable)
+        {
+            for (Player player : getServer().getOnlinePlayers())
+            {
+                if (player.hasPermission("lampcontrol.update"))
+                {
+                    player.sendMessage(ChatColor.YELLOW + "An update is available: " + latestVersion);
+                    player.sendMessage(ChatColor.YELLOW + "Type /crash update if you would like to update.");
+                }
+            }
+
+            getServer().getPluginManager().registerEvents(new Listener()
+            {
+                @EventHandler
+                public void onPlayerJoin (PlayerJoinEvent event)
+                {
+                    Player player = event.getPlayer();
+                    if (player.hasPermission("lampcontrol.update"))
+                    {
+                        player.sendMessage(ChatColor.YELLOW + "An update is available: " + latestVersion);
+                        player.sendMessage(ChatColor.YELLOW + "Type /crash update if you would like to update.");
+                    }
+                }
+            }, this);
+        }
+    }
+    
+    @Override
+    public File getFile() {
+
+        return super.getFile();
+    }
 }

@@ -6,7 +6,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
+
+import com.jacklinkproductions.CrashNotifier.Main;
+import com.jacklinkproductions.CrashNotifier.Updater;
+import com.jacklinkproductions.CrashNotifier.Updater.UpdateResult;
 
 public class CrashCommand implements CommandExecutor {
 	
@@ -20,25 +23,16 @@ public class CrashCommand implements CommandExecutor {
 
 		if (cmd.getName().equalsIgnoreCase("crashnotifier"))
 		{
-	        if (args.length == 0 || args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("info"))
-			{
-		        PluginDescriptionFile pdfFile = Main.getPDF();
-		        sender.sendMessage( ChatColor.GREEN + pdfFile.getName() + " " + pdfFile.getVersion() + "" );
-		        
-		        return true;
-			}
-			else if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("crashnotifier.reload"))
-			{
-                plugin.reloadConfiguration();
-                sender.sendMessage(ChatColor.GREEN + "Configuration reloaded.");
-                
-		        return true;
-			}
+			sender.sendMessage(ChatColor.YELLOW + "-- " + Main.pdfFile.getName() + " v" + Main.pdfFile.getVersion() + " --");
+			sender.sendMessage(ChatColor.RED + "/crash reload - Reload Config");
+			sender.sendMessage(ChatColor.RED + "/crash update - Updates to latest version");
+			sender.sendMessage(ChatColor.RED + "/crash - Fake Crash");
+		    return true;
 		}
 	    else if (cmd.getName().equalsIgnoreCase("crash"))
 		{
 	    	Player player = (Player) sender;
-			CrashListener.fakeCrash = true;
+	    	CrashListener.fakeCrash = true;
 	    	
 	        if (args.length == 0 && sender.hasPermission("crashnotifier.fakecrash"))
 			{
@@ -54,11 +48,49 @@ public class CrashCommand implements CommandExecutor {
 			}
 			else if (args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("info"))
 			{
-		        PluginDescriptionFile pdfFile = Main.getPDF();
-		        sender.sendMessage( ChatColor.GREEN + pdfFile.getName() + " " + pdfFile.getVersion() + "" );
+		        sender.sendMessage( ChatColor.GREEN + Main.pdfFile.getName() + " " + Main.pdfFile.getVersion() + "" );
 		        
 		        return true;
 			}
+            else if (args[0].equalsIgnoreCase("update"))
+			{
+				if (sender.hasPermission("crash.update") || sender.isOp()) 
+				{
+			        if (plugin.getConfig().getString("update-notification") == "false")
+			        {
+			            sender.sendMessage(ChatColor.RED + "This command is disabled in the config!");
+		    		    return true;
+			        }
+			        
+		            if(!plugin.updateAvailable) {
+		                sender.sendMessage(ChatColor.YELLOW + "No updates are available!");
+		    		    return true;
+		            }
+		            
+		            Updater updater = new Updater(plugin, Main.updaterID, plugin.getFile(), Updater.UpdateType.DEFAULT, true);
+		            if(updater.getResult() == UpdateResult.NO_UPDATE)
+		                sender.sendMessage(ChatColor.YELLOW + "No updates are available!");
+		            else
+		            {
+		                sender.sendMessage(ChatColor.YELLOW + "Updating... Check console for details.");
+		            }
+		            
+	    		    return true;
+				}
+				else
+				{
+					sender.sendMessage(ChatColor.RED + "You do not have permissions to perform this command");
+	    		    return true;
+				}
+			}
+            else
+            {
+    			sender.sendMessage(ChatColor.YELLOW + "-- " + Main.pdfFile.getName() + " v" + Main.pdfFile.getVersion() + " --");
+    			sender.sendMessage(ChatColor.RED + "/crash reload - Reload Config");
+    			sender.sendMessage(ChatColor.RED + "/crash update - Updates to latest version");
+    			sender.sendMessage(ChatColor.RED + "/crash - Fake Crash");
+    		    return true;
+            }
 		}
 		
 		return false;
