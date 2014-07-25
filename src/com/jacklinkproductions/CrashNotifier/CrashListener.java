@@ -39,7 +39,7 @@ public class CrashListener implements Listener {
 	    if (event.getPlayer().hasPermission("crashnotifier.join")) {
 
 	        String message = null;
-	    	int online = plugin.getServer().getOnlinePlayers().length;
+	    	int online = plugin.getServer().getOnlinePlayers().size();
 	    	
 	    	String m = joinmessage.replace("{player}", event.getPlayer().getName());
 			message	= m.replace("{online}", ""+online);
@@ -55,7 +55,7 @@ public class CrashListener implements Listener {
 	    if (event.getPlayer().hasPermission("crashnotifier.quit")) { quitPerm = true; }
 	    
         String message = null;
-    	int online = plugin.getServer().getOnlinePlayers().length - 1;
+    	int online = plugin.getServer().getOnlinePlayers().size() - 1;
     	
     	if (fakeCrash) {
 			String m = hostmessage.replace("{player}", event.getPlayer().getName());
@@ -111,7 +111,7 @@ public class CrashListener implements Listener {
 	    }
 
         String message = null;
-    	int online = plugin.getServer().getOnlinePlayers().length - 1;
+    	int online = plugin.getServer().getOnlinePlayers().size() - 1;
     	
 		if (filterCheckHost) {
 			String m = hostmessage.replace("{player}", event.getPlayer().getName());

@@ -1,6 +1,6 @@
 name: CrashNotifier
 author: jacklink01
-version: 2.1
+version: 2.1.2
 main: com.jacklinkproductions.CrashNotifier.Main
 
 commands:
